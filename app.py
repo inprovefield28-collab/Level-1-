@@ -3,52 +3,44 @@ import pandas as pd
 import random
 import os
 
-# --- 1. 設定網頁樣式 (最強制版) ---
+# --- 1. 設定網頁樣式 (終極置左版) ---
 st.markdown("""
     <style>
-    /* 強制按鈕容器對齊與字體 */
+    /* 1. 針對按鈕外殼 */
     div.stButton > button {
         width: 100% !important;
         height: auto !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        padding-left: 20px !important;
-        
-        /* 1. 字體大小，如果還要更大請改 80px */
-        font-size: 60px !important; 
-        font-weight: bold !important;
-        
-        /* 2. 徹底置左：這三行必須同時存在 */
-        display: flex !important;
-        justify-content: flex-start !important; 
-        text-align: left !important;
-        
-        border-radius: 12px !important;
+        padding: 15px 25px !important; /* 增加內邊距 */
+        border-radius: 15px !important;
         background-color: white !important;
         border: 1px solid #ddd !important;
+        
+        /* 確保容器本身不限制內部對齊 */
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
     }
 
-    /* 關鍵：強制按鈕內的文字標籤也要置左並放大 */
+    /* 2. 針對按鈕內部的文字標籤 (關鍵修正) */
     div.stButton > button p {
-        font-size: 60px !important; /* 這裡也要同步放大 */
+        font-size: 60px !important; /* 字體維持 60px */
+        font-weight: bold !important;
+        
+        /* 強制置左：這兩行是關鍵 */
+        margin-left: 0 !important; 
+        margin-right: auto !important; 
+        
         text-align: left !important;
-        margin: 0 !important;
-        width: 100% !important;
-        justify-content: flex-start !important;
+        width: auto !important; /* 不要讓它撐滿，否則會影響 text-align */
+        display: inline-block !important;
     }
     
-    /* 播放鍵加大 */
-    audio {
-        width: 100% !important;
-        height: 80px !important;
-    }
-
-    .question-header {
-        font-size: 36px !important;
-        font-weight: bold;
-    }
+    /* 播放鍵與標題 */
+    audio { width: 100% !important; height: 80px !important; }
+    .question-header { font-size: 36px !important; font-weight: bold; }
     </style>
 """, unsafe_allow_html=True)
+
 # --- 2. 讀取資料 ---
 @st.cache_data
 def load_data():
