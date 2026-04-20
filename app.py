@@ -141,4 +141,169 @@ else:
         .final-score {
             font-size: 80px;
             font-weight: bold;
-            color: #FF69B4; /* 粉紅色分數
+            color: #FF69B4; /* 粉紅色分數 */
+            margin: 0;
+            line-height: 1;
+        }
+        .score-label {
+            font-size: 20px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+        /* 複製按鈕樣式 (綠框藍字) */
+        .copy-btn-custom {
+            background-color: white;
+            color: #007bff;
+            border: 3px solid #8bc34a;
+            padding: 12px 24px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50px; /* 橢圓形 */
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 30px;
+            transition: all 0.2s;
+        }
+        .copy-btn-custom:hover {
+            background-color: #f0fdf4;
+            transform: scale(1.02);
+        }
+        /* 答題細節區塊 */
+        .detail-header {
+            text-align: left;
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        /* 單條答題記錄卡片 */
+        .record-card {
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            text-align: left;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* 正確的樣式 (淡綠背景) */
+        .record-correct {
+            background-color: #E8F5E9;
+            border: 1px solid #C8E6C9;
+            color: #2E7D32;
+        }
+        /* 錯誤的樣式 (淡紅背景) */
+        .record-wrong {
+            background-color: #FFEBEE;
+            border: 1px solid #FFCDD2;
+            color: #C62828;
+        }
+        .record-icon {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        .correct-ans-text {
+            font-weight: bold;
+            margin-top: 5px;
+            display: block;
+        }
+        /* 再玩一次按鈕樣式 (綠色) */
+        .stButton>button.green-restart-btn {
+            background-color: #28a745 !important;
+            color: white !important;
+            border: none !important;
+            font-size: 20px !important;
+            height: 3em !important;
+            margin-top: 20px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # 用一個大 Div 包住所有內容，模擬卡片風格
+    st.markdown('<div class="result-container">', unsafe_allow_html=True)
+    
+    # 分數區頭部
+    st.markdown('<div class="trophy">🏆</div>', unsafe_allow_html=True)
+    st.markdown('<div>測驗結果</div>', unsafe_allow_html=True)
+    st.markdown(f'<p class="final-score">{final_score}</p>', unsafe_allow_html=True)
+    st.markdown('<p class="score-label">總分 100</p>', unsafe_allow_html=True)
+
+    # --- 自定義「點擊即複製」按鈕 (JavaScript) ---
+    st.components.v1.html(f"""
+        <button id="copyBtn" class="copy-btn-custom" style="
+            background-color: white;
+            color: #007bff;
+            border: 3px solid #8bc34a;
+            padding: 12px 24px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        ">
+            按我複製成績給老師
+        </button>
+        <script>
+            document.getElementById('copyBtn').onclick = function() {{
+                const text = `{report_text}`;
+                navigator.clipboard.writeText(text).then(function() {{
+                    document.getElementById('copyBtn').innerText = '✅ 複製成功！';
+                    document.getElementById('copyBtn').style.backgroundColor = '#e8f5e9';
+                    setTimeout(function() {{
+                        document.getElementById('copyBtn').innerText = '按我複製成績給老師';
+                        document.getElementById('copyBtn').style.backgroundColor = 'white';
+                    }}, 2000);
+                }});
+            }};
+        </script>
+    """, height=80)
+
+    # 答題詳情區
+    st.markdown('---')
+    st.markdown('<div class="detail-header">📝 答題詳情分析</div>', unsafe_allow_html=True)
+
+    # 迴圈渲染每一題的結果卡片
+    for i, item in enumerate(st.session_state.results):
+        card_class = "record-correct" if item['is_correct'] else "record-wrong"
+        icon = "✅" if item['is_correct'] else "❌"
+        
+        # 卡片內容 HTML
+        card_html = f"""
+            <div class="record-card {card_class}">
+                <div>
+                    <div><strong>Q{i+1}: {item['question_text']}</strong></div>
+        """
+        
+        if item['is_correct']:
+            card_html += f"<div>你的回答: {item['user_choice_text']}</div>"
+        else:
+            card_html += f"""
+                    <div>你的回答: <span style="text-decoration: line-through;">{item['user_choice_text']}</span></div>
+                    <div class="correct-ans-text">正確答案: {item['correct_text']}</div>
+            """
+            
+        card_html += f"""
+                </div>
+                <div class="record-icon">{icon}</div>
+            </div>
+        """
+        st.markdown(card_html, unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True) # 結束 result-container
+
+    # --- 綠色再玩一次按鈕 ---
+    st.write("") # 留白
+    # 這裡借用 type="primary" 來標記，並用 CSS 強制改綠色
+    if st.button("再玩一次", type="primary", key="restart_btn", use_container_width=True):
+        st.markdown("""
+            <style>
+            button[kind="primary"] {
+                background-color: #28a745 !important;
+                border: none !important;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+        del st.session_state.quiz_data
+        st.rerun()
