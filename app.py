@@ -7,14 +7,29 @@ import os
 st.markdown("""
     <style>
     /* 按鈕框框 */
+    /* 選項按鈕樣式：文字置左與字體大小控制 */
     .stButton>button {
         width: 100%;
-        height: 3.5em;
-        font-size: 30px !important; /* 選項字體加大 */
-        margin-bottom: 15px;
+        
+        /* 1. 只控制字體大小，建議 50px 到 70px 之間 */
+        font-size: 60px !important; 
+        
+        /* 2. 讓框框高度隨字體自動撐開，不要固定高度 */
+        height: auto !important; 
+        
+        /* 3. 關鍵置左設定 */
+        text-align: left !important; 
+        display: flex !important;
+        justify-content: flex-start !important; /* 確保內容從最左邊開始 */
+        align-items: center !important;
+        
+        /* 4. 調整內邊距：左邊留 20px，上下只留 5px 讓框框變窄 */
+        padding-left: 20px !important; 
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+        
         border-radius: 12px;
-        text-align: left !important; /* 文字靠左對齊 */
-        padding-left: 30px !important; /* 左邊留一點空間 */
+        line-height: 1.1 !important;
     }
     
     /* 播放鍵加大 */
