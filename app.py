@@ -132,4 +132,11 @@ else:
     st.write("### 📝 答題詳情分析")
 
     for i, item in enumerate(st.session_state.results):
-        if item['is_correct
+        if item['is_correct']:
+            st.success(f"Q{i+1}: {item['question']} \n\n 你的回答: {item['user_choice']} ✅")
+        else:
+            st.error(f"Q{i+1}: {item['question']} \n\n 你的回答: {item['user_choice']} ❌ \n\n 正確答案: {item['correct_answer']}")
+
+    if st.button("再玩一次", use_container_width=True):
+        del st.session_state.quiz_data
+        st.rerun()
