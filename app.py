@@ -3,7 +3,37 @@ import pandas as pd
 import random
 import os
 
-# --- 1. 讀取資料 ---
+# --- 1. 設定網頁樣式 (大幅優化視覺) ---
+st.markdown("""
+    <style>
+    /* 選項按鈕樣式：文字靠左、字體加大 */
+    .stButton>button {
+        width: 100%;
+        height: 3.5em;
+        font-size: 30px !important; /* 選項字體加大 */
+        margin-bottom: 15px;
+        border-radius: 12px;
+        text-align: left !important; /* 文字靠左對齊 */
+        padding-left: 30px !important; /* 左邊留一點空間 */
+    }
+    
+    /* 播放鍵加大 */
+    audio {
+        width: 100%;
+        height: 80px; /* 強制拉高播放器高度 */
+        margin-bottom: 20px;
+    }
+
+    /* 題目文字加大 */
+    .question-header {
+        font-size: 36px !important;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# --- 2. 讀取資料 ---
 @st.cache_data
 def load_data():
     file_name = "HWG1-100.csv"
@@ -15,20 +45,21 @@ def load_data():
 
 df = load_data()
 
-# --- 2. 初始化 Session State ---
+# --- 3. 初始化 Session State ---
 if 'quiz_data' not in st.session_state:
     st.session_state.quiz_data = df.sample(n=10).to_dict('records')
     st.session_state.current_idx = 0
     st.session_state.results = []
 
-# --- 3. 測驗介面 ---
+# --- 4. 測驗介面 ---
 if st.session_state.current_idx < 10:
     q = st.session_state.quiz_data[st.session_state.current_idx]
     q_vals = list(q.values())
     
-    st.write(f"### 第 {st.session_state.current_idx + 1} / 10 題")
+    st.markdown(f'<p class="question-header">第 {st.session_state.current_idx + 1} / 10 題</p>', unsafe_allow_html=True)
     st.write("## 聽聽看，哪一個是對的？")
     
+    # 提示語速
     st.info("💡 如果覺得太快，點擊音檔右邊的三個點 [⋮] 可以調整速度喔！")
     
     qid = str(q_vals[0]).zfill(3)
@@ -39,16 +70,16 @@ if st.session_state.current_idx < 10:
     else:
         st.warning(f"⚠️ 找不到音檔：{audio_path}")
 
-    # 設定選項與按鈕 (字體加大)
+    # 選項
     option_texts = [q_vals[2], q_vals[3], q_vals[4]]
     option_keys = ['A', 'B', 'C']
     
     for i in range(len(option_texts)):
-        if st.button(str(option_texts[i]), key=f"btn_{i}", use_container_width=True):
+        # 使用 use_container_width 確保滿版
+        if st.button(f"{option_keys[i]}. {option_texts[i]}", key=f"btn_{i}", use_container_width=True):
             user_choice_key = option_keys[i]
             correct_key = str(q_vals[5]).strip().upper()
             
-            # 找出正確答案文字
             correct_text = ""
             if correct_key == 'A': correct_text = q_vals[2]
             elif correct_key == 'B': correct_text = q_vals[3]
@@ -65,7 +96,7 @@ if st.session_state.current_idx < 10:
             st.session_state.current_idx += 1
             st.rerun()
 
-# --- 4. 結果頁面 (純淨白色背景版) ---
+# --- 5. 結果頁面 ---
 else:
     st.balloons()
     st.header("🏆 練習結束囉！")
@@ -74,7 +105,6 @@ else:
     final_score = score_count * 10
     st.subheader(f"得分：{final_score} 分")
 
-    # 製作報表文字 (供點擊複製按鈕使用)
     wrong_details = []
     for i, item in enumerate(st.session_state.results):
         if not item['is_correct']:
@@ -82,19 +112,9 @@ else:
     
     report_text = f"我的成績：{final_score} 分\n" + "\n".join(wrong_details)
 
-    # --- 按我複製成績給老師 (使用 JavaScript 彈出視窗) ---
+    # 複製按鈕
     st.components.v1.html(f"""
-        <button id="copyBtn" style="
-            background-color: white; 
-            color: #007bff; 
-            border: 3px solid #8bc34a; 
-            padding: 15px; 
-            font-size: 22px; 
-            font-weight: bold; 
-            border-radius: 20px; 
-            width: 100%; 
-            cursor: pointer;
-        ">
+        <button id="copyBtn" style="background-color:white; color:#007bff; border:3px solid #8bc34a; padding:15px; font-size:22px; font-weight:bold; border-radius:20px; width:100%; cursor:pointer;">
             按我複製成績給老師
         </button>
         <script>
@@ -111,13 +131,5 @@ else:
     st.write("---")
     st.write("### 📝 答題詳情分析")
 
-    # 循環每一題，顯示綠色或紅色的結果框
     for i, item in enumerate(st.session_state.results):
-        if item['is_correct']:
-            st.success(f"Q{i+1}: {item['question']} \n\n 你的回答: {item['user_choice']} ✅")
-        else:
-            st.error(f"Q{i+1}: {item['question']} \n\n 你的回答: {item['user_choice']} ❌ \n\n 正確答案: {item['correct_answer']}")
-
-    if st.button("再玩一次", use_container_width=True):
-        del st.session_state.quiz_data
-        st.rerun()
+        if item['is_correct
