@@ -3,36 +3,36 @@ import pandas as pd
 import random
 import os
 
-# --- 1. 設定網頁樣式 (終極置左版) ---
+# --- 1. 設定網頁樣式 (Grid 強制置左版) ---
 st.markdown("""
     <style>
-    /* 1. 針對按鈕外殼 */
+    /* 針對按鈕整體：改用 Grid 佈局強制內容靠左 */
     div.stButton > button {
         width: 100% !important;
         height: auto !important;
-        padding: 15px 25px !important; /* 增加內邊距 */
+        padding: 10px 30px !important; 
         border-radius: 15px !important;
+        
+        /* 使用 Grid 佈局 */
+        display: grid !important;
+        justify-items: start !important; /* 這是 Grid 專用的置左指令 */
+        align-items: center !important;
+        
         background-color: white !important;
         border: 1px solid #ddd !important;
-        
-        /* 確保容器本身不限制內部對齊 */
-        display: flex !important;
-        justify-content: flex-start !important;
-        align-items: center !important;
     }
 
-    /* 2. 針對按鈕內部的文字標籤 (關鍵修正) */
-    div.stButton > button p {
-        font-size: 60px !important; /* 字體維持 60px */
+    /* 針對按鈕內所有層級的文字標籤 */
+    div.stButton > button div, 
+    div.stButton > button p, 
+    div.stButton > button span {
+        font-size: 60px !important; /* 字體大小 */
         font-weight: bold !important;
-        
-        /* 強制置左：這兩行是關鍵 */
-        margin-left: 0 !important; 
-        margin-right: auto !important; 
-        
         text-align: left !important;
-        width: auto !important; /* 不要讓它撐滿，否則會影響 text-align */
-        display: inline-block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+        width: auto !important;
     }
     
     /* 播放鍵與標題 */
