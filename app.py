@@ -6,7 +6,7 @@ import os
 # --- 1. 設定網頁樣式 (大幅優化視覺) ---
 st.markdown("""
     <style>
-    /* 選項按鈕樣式：文字靠左、字體加大 */
+    /* 按鈕框框 */
     .stButton>button {
         width: 100%;
         height: 3.5em;
@@ -24,9 +24,9 @@ st.markdown("""
         margin-bottom: 20px;
     }
 
-    /* 題目文字加大 */
+    /* 標題 */
     .question-header {
-        font-size: 72px !important;
+        font-size: 36px !important;
         font-weight: bold;
         margin-bottom: 10px;
     }
