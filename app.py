@@ -8,9 +8,10 @@ st.markdown("""
     <style>
     .stButton>button {
         width: 100%;
-        height: 3em;
-        font-size: 24px !important;
-        margin-bottom: 10px;
+        height: 3.5em;
+        font-size: 26px !important;
+        margin-bottom: 15px;
+        border-radius: 10px;
     }
     .question-text {
         font-size: 32px !important;
@@ -20,15 +21,13 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 1. 讀取資料 (包含編碼偵錯) ---
+# --- 1. 讀取資料 ---
 @st.cache_data
 def load_data():
     file_name = "HWG1-100.csv"
     try:
-        # 先嘗試 UTF-8
         df = pd.read_csv(file_name, encoding='utf-8-sig')
     except:
-        # 若失敗則嘗試 Big5 (台灣 Excel 常見格式)
         df = pd.read_csv(file_name, encoding='big5')
     return df
 
@@ -36,42 +35,50 @@ df = load_data()
 
 # --- 2. 初始化 Session State ---
 if 'quiz_data' not in st.session_state:
-    # 隨機選 10 題
+    # 隨機挑 10 題
     st.session_state.quiz_data = df.sample(n=10).to_dict('records')
     st.session_state.current_idx = 0
-    st.session_state.results = [] # 儲存答題狀況
+    st.session_state.results = []
 
 # --- 3. 測驗介面 ---
 if st.session_state.current_idx < 10:
+    # 取得當前題目
     q = st.session_state.quiz_data[st.session_state.current_idx]
+    # 將資料轉為 list 方便用位置索引 (防標題亂碼)
+    q_vals = list(q.values())
     
     st.write(f"### 第 {st.session_state.current_idx + 1} / 10 題")
-    st.markdown(f'<p class="question-text">聽聽看，哪一個是對的？</p>', unsafe_allow_html=True)
+    st.markdown('<p class="question-text">聽聽看，哪一個是對的？</p>', unsafe_allow_html=True)
     
-    # 音檔處理：補零成 q_001.mp3 格式
-    qid = str(q['id']).zfill(3)
+    # 音檔路徑 (假設第0欄是id)
+    qid = str(q_vals[0]).zfill(3)
     audio_path = f"audio/q_{qid}.mp3"
     
-    # 防錯：如果音檔不存在，顯示警告而不是讓程式崩潰
     if os.path.exists(audio_path):
         st.audio(audio_path)
     else:
         st.warning(f"⚠️ 找不到音檔：{audio_path}")
 
-    # 準備選項
-    opts = [q['option_a'], q['option_b'], q['option_c']]
+    # 定義選項文字 (假設第2,3,4欄分別是 A, B, C 的選項文字)
+    # 定義對應代號
+    option_texts = [q_vals[2], q_vals[3], q_vals[4]]
+    option_keys = ['A', 'B', 'C']
     
-    # 建立大按鈕供點擊
-    for opt in opts:
-        if st.button(opt):
-            # 比對 answerkey 欄位
-            # 加上 strip() 防止 Excel 裡有看不見的空白
-            is_correct = (str(opt).strip() == str(q['answerkey']).strip())
+    # 顯示按鈕
+    for i in range(len(option_texts)):
+        if st.button(str(option_texts[i]), key=f"btn_{i}"):
+            # 學生點的代號 (A, B 或 C)
+            user_choice_key = option_keys[i]
+            # 正確答案代號 (從第5欄抓取並去空格)
+            correct_key = str(q_vals[5]).strip().upper()
             
+            is_correct = (user_choice_key == correct_key)
+            
+            # 紀錄結果
             st.session_state.results.append({
-                "question": q['question'],
-                "user_choice": opt,
-                "correct_answer": q['answerkey'],
+                "question_text": q_vals[1], # 第1欄是問句文字
+                "user_choice_text": option_texts[i],
+                "correct_answer_key": correct_key,
                 "is_correct": is_correct
             })
             st.session_state.current_idx += 1
@@ -80,7 +87,7 @@ if st.session_state.current_idx < 10:
 # --- 4. 結果頁面與錯題複製 ---
 else:
     st.balloons()
-    st.header("完成練習！")
+    st.header("練習結束囉！")
     
     wrong_list = []
     score = 0
@@ -89,18 +96,17 @@ else:
         if item['is_correct']:
             score += 1
         else:
-            wrong_list.append(f"題目：{item['question']}\n你的答案：{item['user_choice']}\n正確答案：{item['correct_answer']}\n---")
+            wrong_list.append(f"題目：{item['question_text']}\n你的回答：{item['user_choice_text']}\n正確答案代號：{item['correct_answer_key']}\n---")
 
     st.subheader(f"得分：{score} / 10")
 
     if wrong_list:
-        st.write("### ❌ 錯題記錄 (可複製下方內容)")
-        wrong_text = "\n".join(wrong_list)
-        st.text_area("選取並複製：", value=wrong_text, height=300)
+        st.write("### ❌ 錯題記錄")
+        summary_text = "\n".join(wrong_list)
+        st.text_area("選取下方文字即可複製：", value=summary_text, height=300)
     else:
-        st.success("太棒了！全部正確！")
+        st.success("超級厲害！全部都答對了！")
 
-    if st.button("再測驗一次"):
-        # 清除資料重新開始
+    if st.button("再玩一次"):
         del st.session_state.quiz_data
         st.rerun()
