@@ -3,39 +3,32 @@ import pandas as pd
 import random
 import os
 
-# --- 1. 設定網頁樣式 (精確對齊與超大字體) ---
+# --- 1. 設定網頁樣式 (大幅優化視覺) ---
 st.markdown("""
     <style>
-    /* 選項按鈕樣式 */
+    /* 選項按鈕樣式：文字靠左、字體加大 */
     .stButton>button {
         width: 100%;
-        height: 4em; /* 增加按鈕高度以容納大字體 */
-        font-size: 48px !important; /* 字體放大 2 倍以上 */
-        margin-bottom: 20px;
-        border-radius: 15px;
-        
-        /* 文字靠左對齊關鍵 */
-        text-align: left !important; 
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        padding-left: 40px !important; /* 增加左邊間距，避免太貼邊 */
-        
-        line-height: 1.2 !important;
-        white-space: normal !important; /* 允許長句子換行 */
+        height: 3.5em;
+        font-size: 30px !important; /* 選項字體加大 */
+        margin-bottom: 15px;
+        border-radius: 12px;
+        text-align: left !important; /* 文字靠左對齊 */
+        padding-left: 30px !important; /* 左邊留一點空間 */
     }
     
     /* 播放鍵加大 */
     audio {
         width: 100%;
-        height: 80px;
-        margin-bottom: 25px;
+        height: 80px; /* 強制拉高播放器高度 */
+        margin-bottom: 20px;
     }
 
-    /* 題目字體 */
+    /* 題目文字加大 */
     .question-header {
         font-size: 36px !important;
         font-weight: bold;
+        margin-bottom: 10px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -66,6 +59,7 @@ if st.session_state.current_idx < 10:
     st.markdown(f'<p class="question-header">第 {st.session_state.current_idx + 1} / 10 題</p>', unsafe_allow_html=True)
     st.write("## 聽聽看，哪一個是對的？")
     
+    # 提示語速
     st.info("💡 如果覺得太快，點擊音檔右邊的三個點 [⋮] 可以調整速度喔！")
     
     qid = str(q_vals[0]).zfill(3)
@@ -76,18 +70,16 @@ if st.session_state.current_idx < 10:
     else:
         st.warning(f"⚠️ 找不到音檔：{audio_path}")
 
-    # 選項文字
+    # 選項
     option_texts = [q_vals[2], q_vals[3], q_vals[4]]
     option_keys = ['A', 'B', 'C']
     
     for i in range(len(option_texts)):
-        # 在按鈕內顯示 A. B. C.
-        button_label = f"{option_keys[i]}. {option_texts[i]}"
-        if st.button(button_label, key=f"btn_{i}", use_container_width=True):
+        # 使用 use_container_width 確保滿版
+        if st.button(f"{option_keys[i]}. {option_texts[i]}", key=f"btn_{i}", use_container_width=True):
             user_choice_key = option_keys[i]
             correct_key = str(q_vals[5]).strip().upper()
             
-            # 取得正確答案文字
             correct_text = ""
             if correct_key == 'A': correct_text = q_vals[2]
             elif correct_key == 'B': correct_text = q_vals[3]
@@ -120,7 +112,7 @@ else:
     
     report_text = f"我的成績：{final_score} 分\n" + "\n".join(wrong_details)
 
-    # 複製成績按鈕 (JS)
+    # 複製按鈕
     st.components.v1.html(f"""
         <button id="copyBtn" style="background-color:white; color:#007bff; border:3px solid #8bc34a; padding:15px; font-size:22px; font-weight:bold; border-radius:20px; width:100%; cursor:pointer;">
             按我複製成績給老師
