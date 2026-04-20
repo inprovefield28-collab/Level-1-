@@ -26,7 +26,7 @@ st.markdown("""
 
     /* 題目文字加大 */
     .question-header {
-        font-size: 36px !important;
+        font-size: 72px !important;
         font-weight: bold;
         margin-bottom: 10px;
     }
