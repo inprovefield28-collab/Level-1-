@@ -10,7 +10,7 @@ st.markdown("""
     .stButton>button {
         width: 100%;
         height: 3.5em;
-        font-size: 80px !important; /* 選項字體加大 */
+        font-size: 30px !important; /* 選項字體加大 */
         margin-bottom: 15px;
         border-radius: 12px;
         text-align: left !important; /* 文字靠左對齊 */
