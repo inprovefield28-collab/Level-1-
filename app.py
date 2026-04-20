@@ -23,7 +23,7 @@ st.markdown("""
 
     /* 強制按鈕內的文字標籤 */
     div.stButton > button p {
-        font-size: 60px !important;
+        font-size: 45px !important;
         font-weight: bold !important;
         text-align: left !important;
         /* 關鍵：保留空格 */
