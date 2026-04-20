@@ -105,54 +105,66 @@ else:
     wrong_list = []
     score_count = 0
     
+    # 恢復原本的文字顯示樣式
+    st.write("### 📝 答題詳情：")
     for item in st.session_state.results:
         if item['is_correct']:
             score_count += 1
+            st.write(f"✅ 題目：{item['question_text']} (正確)")
         else:
-            wrong_list.append(f"題目：{item['question_text']}\n你的回答：{item['user_choice_text']}\n正確答案代號：{item['correct_answer_key']}\n---")
+            msg = f"❌ 題目：{item['question_text']}\n你的回答：{item['user_choice_text']}\n正確答案代號：{item['correct_answer_key']}"
+            st.write(msg)
+            wrong_list.append(msg)
+            st.write("---")
 
-    # 每題 10 分
     final_score = score_count * 10
-    st.markdown(f'<p class="score-text">得分：{final_score} 分</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="score-text">最終得分：{final_score} 分</p>', unsafe_allow_html=True)
 
-    # 製作複製給老師的文字內容
+    # 製作報表文字
     report_text = f"老師好！我的練習成績是：{final_score} 分\n"
     if wrong_list:
         report_text += "【錯題記錄】\n" + "\n".join(wrong_list)
     else:
         report_text += "全部都答對了！🌟"
 
-    # --- 藍色點擊複製區塊 ---
-    st.markdown('<p style="color: #007bff; font-weight: bold; font-size: 22px; margin-top: 20px;">🔵 點擊框框右上角即可複製成績：</p>', unsafe_allow_html=True)
-    
-    # 使用 st.code 會自帶一鍵複製功能，配合 CSS 讓它看起來像藍色框
-    st.markdown("""
-        <style>
-        code {
-            color: #0056b3 !important;
-            background-color: #e7f3ff !important;
-            border: 2px solid #007bff !important;
-            font-size: 18px !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-    
-    st.code(report_text, language=None)
-    
+    # --- 自定義「點擊即複製」按鈕 (JavaScript 實作) ---
+    # 這裡做出你圖片中的樣式：綠色框、藍色字
+    st.components.v1.html(f"""
+        <div style="text-align:center;">
+            <button id="copyBtn" style="
+                background-color: white;
+                color: #007bff;
+                border: 3px solid #8bc34a;
+                padding: 15px 30px;
+                font-size: 24px;
+                font-weight: bold;
+                border-radius: 20px;
+                cursor: pointer;
+                width: 100%;
+            ">
+                按我複製成績給老師
+            </button>
+        </div>
+        <script>
+            document.getElementById('copyBtn').onclick = function() {{
+                const text = `{report_text}`;
+                navigator.clipboard.writeText(text).then(function() {{
+                    document.getElementById('copyBtn').innerText = '✅ 複製成功！';
+                    document.getElementById('copyBtn').style.borderColor = '#28a745';
+                    setTimeout(function() {{
+                        document.getElementById('copyBtn').innerText = '按我複製成績給老師';
+                        document.getElementById('copyBtn').style.borderColor = '#8bc34a';
+                    }}, 2000);
+                }});
+            }};
+        </script>
+    """, height=100)
+
     st.write("---")
 
     # --- 綠色再玩一次按鈕 ---
-    # 使用 streamlit 的原生支援來設定顏色 (最穩定做法)
-    if st.button("再玩一次", type="primary", use_container_width=True):
-        # 設定 CSS 讓 primary 按鈕變成綠色
-        st.markdown("""
-            <style>
-            div.stButton > button:first-child {
-                background-color: #28a745 !important;
-                color: white !important;
-                border: none !important;
-            }
-            </style>
-        """, unsafe_allow_html=True)
+    st.markdown('<div class="green-btn">', unsafe_allow_html=True)
+    if st.button("再玩一次"):
         del st.session_state.quiz_data
         st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
