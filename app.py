@@ -6,38 +6,33 @@ import os
 # --- 1. 設定網頁樣式 (Grid 強制置左版) ---
 st.markdown("""
     <style>
-    /* 針對按鈕整體：改用 Grid 佈局強制內容靠左 */
+    /* 強制按鈕樣式 */
     div.stButton > button {
         width: 100% !important;
         height: auto !important;
-        padding: 10px 30px !important; 
-        border-radius: 15px !important;
-        
-        /* 使用 Grid 佈局 */
-        display: grid !important;
-        justify-items: start !important; /* 這是 Grid 專用的置左指令 */
-        align-items: center !important;
-        
+        padding: 10px 20px !important;
         background-color: white !important;
         border: 1px solid #ddd !important;
+        border-radius: 15px !important;
+        
+        /* 確保內容從左邊開始 */
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
     }
 
-    /* 針對按鈕內所有層級的文字標籤 */
-    div.stButton > button div, 
-    div.stButton > button p, 
-    div.stButton > button span {
-        font-size: 60px !important; /* 字體大小 */
+    /* 強制按鈕內的文字標籤 */
+    div.stButton > button p {
+        font-size: 60px !important;
         font-weight: bold !important;
         text-align: left !important;
+        /* 關鍵：保留空格 */
+        white-space: pre !important; 
         margin: 0 !important;
-        padding: 0 !important;
-        display: block !important;
-        width: auto !important;
+        width: 100% !important;
     }
     
-    /* 播放鍵與標題 */
     audio { width: 100% !important; height: 80px !important; }
-    .question-header { font-size: 36px !important; font-weight: bold; }
     </style>
 """, unsafe_allow_html=True)
 
