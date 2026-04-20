@@ -1,68 +1,93 @@
 import streamlit as st
+import pandas as pd
 import random
 
-st.set_page_config(page_title="English Quiz", layout="centered")
-st.title("🧒 English Quiz")
+# --- 設定網頁樣式 (字體加大) ---
+st.markdown("""
+    <style>
+    .stButton>button {
+        width: 100%;
+        height: 3em;
+        font-size: 24px !important;
+        margin-bottom: 10px;
+    }
+    .question-text {
+        font-size: 32px !important;
+        font-weight: bold;
+        color: #2E4053;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-# ====== 20 題題庫（加上 audio） ======
-QUESTIONS = [
-    {"q": "Elephant", "choices": [("A","Egg"),("B","Elephant"),("C","Eat")], "answer": "B", "audio": "audio/Q01.mp3"},
-    {"q": "What color is the sky?", "choices": [("A","Green"),("B","Blue"),("C","Red")], "answer": "B", "audio": "audio/Q02.mp3"},
-    {"q": "I am hungry. I want to", "choices": [("A","Eat"),("B","Sleep"),("C","Play")], "answer": "A", "audio": "audio/Q03.mp3"},
-    {"q": "Sunday", "choices": [("A","Monday"),("B","Sunday"),("C","Saturday")], "answer": "B", "audio": "audio/Q04.mp3"},
-    {"q": "How are you?", "choices": [("A","I am seven"),("B","I am a boy"),("C","I am fine")], "answer": "C", "audio": "audio/Q05.mp3"},
-    {"q": "Library", "choices": [("A","You can swim here"),("B","You can read books here"),("C","You can buy food here")], "answer": "B", "audio": "audio/Q06.mp3"},
-    {"q": "Which one is a fruit?", "choices": [("A","An apple"),("B","A dog"),("C","A bus")], "answer": "A", "audio": "audio/Q07.mp3"},
-    {"q": "Touch your nose", "choices": [("A","Eye"),("B","Nose"),("C","Mouth")], "answer": "B", "audio": "audio/Q08.mp3"},
-    {"q": "What do you say in the morning?", "choices": [("A","Good night"),("B","Good afternoon"),("C","Good morning")], "answer": "C", "audio": "audio/Q09.mp3"},
-    {"q": "One plus two is", "choices": [("A","Two"),("B","Three"),("C","Four")], "answer": "B", "audio": "audio/Q10.mp3"},
-    {"q": "It is raining. Take your", "choices": [("A","Umbrella"),("B","Hat"),("C","Shoes")], "answer": "A", "audio": "audio/Q11.mp3"},
-    {"q": "Where is the cat?", "choices": [("A","Under the table"),("B","In the sky"),("C","On the moon")], "answer": "A", "audio": "audio/Q12.mp3"},
-    {"q": "A doctor works in a", "choices": [("A","School"),("B","Hospital"),("C","Park")], "answer": "B", "audio": "audio/Q13.mp3"},
-    {"q": "Can you swim?", "choices": [("A","Yes I can"),("B","Yes I am"),("C","No I do not")], "answer": "A", "audio": "audio/Q14.mp3"},
-    {"q": "Which animal can fly?", "choices": [("A","A bird"),("B","A fish"),("C","A pig")], "answer": "A", "audio": "audio/Q15.mp3"},
-    {"q": "Today is Monday. Tomorrow is", "choices": [("A","Wednesday"),("B","Tuesday"),("C","Sunday")], "answer": "B", "audio": "audio/Q16.mp3"},
-    {"q": "Close the", "choices": [("A","Window"),("B","Water"),("C","Milk")], "answer": "A", "audio": "audio/Q17.mp3"},
-    {"q": "My father's brother is my", "choices": [("A","Aunt"),("B","Uncle"),("C","Brother")], "answer": "B", "audio": "audio/Q18.mp3"},
-    {"q": "Wake up", "choices": [("A","It is time for bed"),("B","It is time to get up"),("C","It is time to eat lunch")], "answer": "B", "audio": "audio/Q19.mp3"},
-    {"q": "How is the weather?", "choices": [("A","It is sunny"),("B","It is a pen"),("C","It is five o'clock")], "answer": "A", "audio": "audio/Q20.mp3"},
-]
+# --- 1. 讀取資料 ---
+@st.cache_data
+def load_data():
+    # 讀取你的 100 題 CSV
+    df = pd.read_csv("HWG1-100.csv")
+    return df
 
-# ====== 初始化（只做一次） ======
-if "quiz" not in st.session_state:
-    st.session_state.quiz = random.sample(QUESTIONS, 5)
-    st.session_state.answers = {}
-    st.session_state.submitted = False
+df = load_data()
 
-# ====== 題目顯示（含音檔） ======
-for i, q in enumerate(st.session_state.quiz, 1):
-    st.audio(q["audio"])
-    st.write(f"### {i}. {q['q']}")
-    st.session_state.answers[i] = st.radio(
-        "選答案",
-        q["choices"],
-        format_func=lambda x: f"{x[0]}. {x[1]}",
-        key=f"q{i}"
-    )[0]
+# --- 2. 初始化 Session State (確保重新整理不會亂掉) ---
+if 'quiz_data' not in st.session_state:
+    # 從 100 題中隨機選 10 題
+    st.session_state.quiz_data = df.sample(n=10).to_dict('records')
+    st.session_state.current_idx = 0
+    st.session_state.answerkeys = [] # 格式: (題目, 選錯的項, 正確答案, 是否正確)
 
-# ====== 交卷 ======
-if st.button("✅ Finish"):
-    st.session_state.submitted = True
+# --- 3. 測驗介面 ---
+if st.session_state.current_idx < 10:
+    q = st.session_state.quiz_data[st.session_state.current_idx]
+    
+    st.write(f"### 第 {st.session_state.current_idx + 1} / 10 題")
+    st.markdown(f'<p class="question-text">聽聽看，哪一個是對的？</p>', unsafe_allow_html=True)
+    
+    # 播放音檔 (檔名需對應: q_001.mp3)
+    qid = str(q['id']).zfill(3)
+    st.audio(f"audio/q_{qid}.mp3")
 
-# ====== 批改 ======
-if st.session_state.submitted:
+    # 答案按鈕 (字體已透過 CSS 加大)
+    # 假設你的 CSV 欄位是 option_a, option_b, option_c
+    opts = [q['option_a'], q['option_b'], q['option_c']]
+    
+    for opt in opts:
+        if st.button(opt):
+            # 判斷正誤 (假設 answerkey 欄位存的是內容文字，或是 A/B/C)
+            # 這裡示範比對文字內容
+            is_correct = (opt == q['answerkey'])
+            st.session_state.answerkeys.append({
+                "question": q['question'],
+                "user_choice": opt,
+                "correct_answerkey": q['answerkey'],
+                "is_correct": is_correct
+            })
+            st.session_state.current_idx += 1
+            st.rerun()
+
+# --- 4. 結果頁面與錯題複製 ---
+else:
+    st.balloons()
+    st.header("完成練習！")
+    
+    wrong_list = []
     score = 0
-    wrong = []
-
-    for i, q in enumerate(st.session_state.quiz, 1):
-        if st.session_state.answers[i] == q["answer"]:
-            score += 20
+    
+    for item in st.session_state.answerkeys:
+        if item['is_correct']:
+            score += 1
         else:
-            wrong.append(q["q"])
+            # 格式化錯題字串
+            wrong_list.append(f"題目：{item['question']}\n你的答案：{item['user_choice']}\n正確答案：{item['correct_answerkey']}\n---")
 
-    st.success(f"🎯 Score: {score} / 100")
+    st.subheader(f"得分：{score} / 10")
 
-    if wrong:
-        st.error("❌ Wrong questions")
-        for w in wrong:
-            st.write("- " + w)
+    if wrong_list:
+        st.write("### ❌ 錯題記錄")
+        wrong_text = "\n".join(wrong_list)
+        st.text_area("可以手動選取複製以下錯題內容：", value=wrong_text, height=300)
+    else:
+        st.success("太棒了！全部正確！")
+
+    if st.button("再測驗一次"):
+        del st.session_state.quiz_data
+        st.rerun()
