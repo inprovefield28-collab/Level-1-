@@ -111,7 +111,7 @@ else:
         else:
             wrong_list.append(f"題目：{item['question_text']}\n你的回答：{item['user_choice_text']}\n正確答案代號：{item['correct_answer_key']}\n---")
 
-    # 計算總分 (每題 10 分)
+    # 每題 10 分
     final_score = score_count * 10
     st.markdown(f'<p class="score-text">得分：{final_score} 分</p>', unsafe_allow_html=True)
 
@@ -122,30 +122,37 @@ else:
     else:
         report_text += "全部都答對了！🌟"
 
-    # 藍色複製成績鍵 (使用 text_area 讓學生直接點擊複製)
-    st.markdown('<p style="color: #007bff; font-weight: bold; font-size: 20px;">🔵 複製成績給老師：</p>', unsafe_allow_html=True)
-    st.text_area(label="", value=report_text, height=200, label_visibility="collapsed")
+    # --- 藍色點擊複製區塊 ---
+    st.markdown('<p style="color: #007bff; font-weight: bold; font-size: 22px; margin-top: 20px;">🔵 點擊框框右上角即可複製成績：</p>', unsafe_allow_html=True)
+    
+    # 使用 st.code 會自帶一鍵複製功能，配合 CSS 讓它看起來像藍色框
+    st.markdown("""
+        <style>
+        code {
+            color: #0056b3 !important;
+            background-color: #e7f3ff !important;
+            border: 2px solid #007bff !important;
+            font-size: 18px !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    st.code(report_text, language=None)
     
     st.write("---")
 
-    # 綠色再玩一次按鈕
-    if st.button("再玩一次 (綠色按鈕)"):
+    # --- 綠色再玩一次按鈕 ---
+    # 使用 streamlit 的原生支援來設定顏色 (最穩定做法)
+    if st.button("再玩一次", type="primary", use_container_width=True):
+        # 設定 CSS 讓 primary 按鈕變成綠色
+        st.markdown("""
+            <style>
+            div.stButton > button:first-child {
+                background-color: #28a745 !important;
+                color: white !important;
+                border: none !important;
+            }
+            </style>
+        """, unsafe_allow_html=True)
         del st.session_state.quiz_data
         st.rerun()
-
-    # CSS 補充：強制修改按鈕顏色
-    st.markdown("""
-        <script>
-        var buttons = window.parent.document.querySelectorAll('button');
-        buttons.forEach(function(btn){
-            if(btn.innerText.includes('再玩一次')){
-                btn.style.backgroundColor = '#28a745';
-                btn.style.color = 'white';
-            }
-            if(btn.innerText.includes('複製成績')){
-                btn.style.backgroundColor = '#007bff';
-                btn.style.color = 'white';
-            }
-        });
-        </script>
-    """, unsafe_allow_html=True)
