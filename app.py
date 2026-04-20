@@ -3,51 +3,52 @@ import pandas as pd
 import random
 import os
 
-# --- 1. 設定網頁樣式 (大幅優化視覺) ---
+# --- 1. 設定網頁樣式 (最強制版) ---
 st.markdown("""
     <style>
-    /* 按鈕框框 */
-    /* 選項按鈕樣式：文字置左與字體大小控制 */
-    .stButton>button {
-        width: 100%;
+    /* 強制按鈕容器對齊與字體 */
+    div.stButton > button {
+        width: 100% !important;
+        height: auto !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        padding-left: 20px !important;
         
-        /* 1. 只控制字體大小，建議 50px 到 70px 之間 */
+        /* 1. 字體大小，如果還要更大請改 80px */
         font-size: 60px !important; 
+        font-weight: bold !important;
         
-        /* 2. 讓框框高度隨字體自動撐開，不要固定高度 */
-        height: auto !important; 
-        
-        /* 3. 關鍵置左設定 */
-        text-align: left !important; 
+        /* 2. 徹底置左：這三行必須同時存在 */
         display: flex !important;
-        justify-content: flex-start !important; /* 確保內容從最左邊開始 */
-        align-items: center !important;
+        justify-content: flex-start !important; 
+        text-align: left !important;
         
-        /* 4. 調整內邊距：左邊留 20px，上下只留 5px 讓框框變窄 */
-        padding-left: 20px !important; 
-        padding-top: 5px !important;
-        padding-bottom: 5px !important;
-        
-        border-radius: 12px;
-        line-height: 1.1 !important;
+        border-radius: 12px !important;
+        background-color: white !important;
+        border: 1px solid #ddd !important;
+    }
+
+    /* 關鍵：強制按鈕內的文字標籤也要置左並放大 */
+    div.stButton > button p {
+        font-size: 60px !important; /* 這裡也要同步放大 */
+        text-align: left !important;
+        margin: 0 !important;
+        width: 100% !important;
+        justify-content: flex-start !important;
     }
     
     /* 播放鍵加大 */
     audio {
-        width: 100%;
-        height: 80px; /* 強制拉高播放器高度 */
-        margin-bottom: 20px;
+        width: 100% !important;
+        height: 80px !important;
     }
 
-    /* 標題 */
     .question-header {
         font-size: 36px !important;
         font-weight: bold;
-        margin-bottom: 10px;
     }
     </style>
 """, unsafe_allow_html=True)
-
 # --- 2. 讀取資料 ---
 @st.cache_data
 def load_data():
