@@ -62,7 +62,7 @@ if not df.empty and st.session_state.current_idx < len(st.session_state.quiz_dat
         'C': str(q.get('C', ''))
     }
     # 正確答案標籤 (A, B, 或 C)
-    correct_label = str(q.get('answer', '')).strip().upper()
+    correct_label = str(q.get('answerkey', '')).strip().upper()
 
     st.write(f"### 第 {st.session_state.current_idx + 1} / 10 題")
     
