@@ -56,22 +56,18 @@ def load_data():
     for file_name in files_to_load:
         if os.path.exists(file_name):
             try:
-                # 優先嘗試 utf-8-sig (處理 Excel 產生的 CSV BOM)
                 temp_df = pd.read_csv(file_name, encoding='utf-8-sig')
-                df_list.append(temp_df)
             except Exception:
-                try:
-                    temp_df = pd.read_csv(file_name, encoding='big5')
-                    df_list.append(temp_df)
-                except Exception as e:
-                    st.error(f"讀取 {file_name} 時出錯: {e}")
+                temp_df = pd.read_csv(file_name, encoding='big5')
+            
+            # 重要：統一欄位名稱為小寫並去除空白，避免 Answerkey vs answerkey 的問題
+            temp_df.columns = [c.strip().lower() for c in temp_df.columns]
+            df_list.append(temp_df)
     
     if not df_list:
         return pd.DataFrame()
     
-    # 合併多個 CSV
-    combined_df = pd.concat(df_list, ignore_index=True)
-    return combined_df
+    return pd.concat(df_list, ignore_index=True)
 
 df = load_data()
 
@@ -81,7 +77,6 @@ if df.empty:
     st.stop()
 
 if 'quiz_data' not in st.session_state:
-    # 從 1-200 題中隨機抽 10 題
     sample_size = min(len(df), 10)
     st.session_state.quiz_data = df.sample(n=sample_size).to_dict('records')
     st.session_state.current_idx = 0
@@ -91,42 +86,44 @@ if 'quiz_data' not in st.session_state:
 if st.session_state.current_idx < len(st.session_state.quiz_data):
     q = st.session_state.quiz_data[st.session_state.current_idx]
     
-    # 取得各欄位資料 (假設欄位順序: 0:id, 1:question, 2:A, 3:B, 4:C, 5:answer)
-    # 使用 .get() 確保 key 不存在時不會報錯
+    # 因為前面統一轉了小寫，這裡用小寫 key 抓取
     q_id_val = q.get('id', 0)
     q_text = q.get('question', '')
-    options = [q.get('A', ''), q.get('B', ''), q.get('C', '')]
-    correct_key = str(q.get('answer', '')).strip().upper()
+    
+    # 建立選項映射
+    opts_map = {
+        'A': str(q.get('a', '')),
+        'B': str(q.get('b', '')),
+        'C': str(q.get('c', ''))
+    }
+    
+    # 針對你的 Answerkey 欄位進行對位 (已轉小寫)
+    correct_key = str(q.get('answerkey', q.get('answer', ''))).strip().upper()
 
     st.markdown(f'<p class="question-header">第 {st.session_state.current_idx + 1} / 10 題</p>', unsafe_allow_html=True)
     st.write("## 聽聽看，哪一個是對的？")
     
-    st.info("💡 如果覺得太快，點擊音檔右邊的三個點 [⋮] 可以調整速度喔！")
-    
-    # 處理音檔路徑 (自動補零至三位數)
     qid_str = str(q_id_val).zfill(3)
     audio_path = f"audio/q_{qid_str}.mp3"
     
     if os.path.exists(audio_path):
         st.audio(audio_path)
     else:
-        st.warning(f"⚠️ 找不到音檔：{audio_path} (請確認 audio 資料夾內是否有此檔案)")
+        st.warning(f"⚠️ 找不到音檔：{audio_path}")
 
     # 選項按鈕
     option_keys = ['A', 'B', 'C']
-    for i in range(len(options)):
-        if st.button(f"{option_keys[i]}. {options[i]}", key=f"btn_{st.session_state.current_idx}_{i}", use_container_width=True):
-            user_choice_key = option_keys[i]
+    for i, key in enumerate(option_keys):
+        option_text = opts_map[key]
+        if st.button(f"{key}. {option_text}", key=f"btn_{st.session_state.current_idx}_{i}", use_container_width=True):
             
-            # 找出正確答案的文字內容
-            correct_index = option_keys.index(correct_key) if correct_key in option_keys else 0
-            correct_text = options[correct_index]
-
-            is_correct = (user_choice_key == correct_key)
+            # 正確答案的文字
+            correct_text = opts_map.get(correct_key, "答案設定錯誤")
+            is_correct = (key == correct_key)
             
             st.session_state.results.append({
                 "question": q_text,
-                "user_choice": options[i],
+                "user_choice": option_text,
                 "correct_answer": correct_text,
                 "is_correct": is_correct
             })
@@ -143,7 +140,7 @@ else:
     final_score = int((score_count / total_q) * 100)
     st.subheader(f"得分：{final_score} 分 (答對 {score_count} 題)")
 
-    # 製作複製用的字串
+    # 製作複製報告
     wrong_details = []
     for i, item in enumerate(st.session_state.results):
         if not item['is_correct']:
@@ -151,32 +148,5 @@ else:
     
     report_text = f"我的英文測驗成績：{final_score} 分\n" + "\n".join(wrong_details)
 
-    # 複製按鈕組件
     st.components.v1.html(f"""
-        <button id="copyBtn" style="background-color:white; color:#007bff; border:3px solid #8bc34a; padding:15px; font-size:22px; font-weight:bold; border-radius:20px; width:100%; cursor:pointer;">
-            按我複製成績給老師
-        </button>
-        <script>
-            document.getElementById('copyBtn').onclick = function() {{
-                const text = `{report_text}`;
-                navigator.clipboard.writeText(text).then(function() {{
-                    document.getElementById('copyBtn').innerText = '✅ 複製成功！';
-                    setTimeout(function() {{ document.getElementById('copyBtn').innerText = '按我複製成績給老師'; }}, 2000);
-                }});
-            }};
-        </script>
-    """, height=100)
-
-    st.write("---")
-    st.write("### 📝 答題詳情分析")
-
-    for i, item in enumerate(st.session_state.results):
-        if item['is_correct']:
-            st.success(f"**Q{i+1}: {item['question']}** \n\n 你的回答: {item['user_choice']} ✅")
-        else:
-            st.error(f"**Q{i+1}: {item['question']}** \n\n 你的回答: {item['user_choice']} ❌ \n\n 正確答案: {item['correct_answer']}")
-
-    if st.button("再玩一次", use_container_width=True):
-        if 'quiz_data' in st.session_state:
-            del st.session_state.quiz_data
-        st.rerun()
+        <button id="copyBtn" style="background-color:white; color:#007bff; border:3px solid #8bc3
