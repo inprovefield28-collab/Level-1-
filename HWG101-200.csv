@@ -1,0 +1,101 @@
+id,question,A,B,C,Answerkey
+101,What's your name?,I am Rocky.,He is Rocky.,It's Rocky.,A
+102,How old are you?,I'm fine.,I'm seven.,You're welcome.,B
+103,What's this?,It's blue.,It's a pencil.,"No, it isn't.",B
+104,What color is it?,It's red.,It's a red pen.,"Yes, it is.",A
+105,Is that a dog?,"No, it isn't.","Yes, I can.",He is tall.,A
+106,What can you do?,I'm ten.,She's my mother.,I can draw.,C
+107,Can you swim?,"No, it's not.","Yes, he is.","No, I can't.",C
+108,Who's he?,I'm Mia.,He's my father.,She's my sister.,B
+109,Is he a teacher?,"Yes, he is.","No, she's not.",I am a student.,A
+110,How are you?,Good morning.,Thank you.,I'm fine.,C
+111,What's that?,It's an eraser.,I'm fine.,"Yes, it is.",A
+112,Is she a doctor?,He is a doctor.,"Yes, she is.","No, it isn't.",B
+113,What color is it?,It's a green tree.,"Yes, it is.",It's green.,C
+114,Can you sing?,"No, I can't.",I am sing.,"Yes, it is.",A
+115,Who's she?,She's my grandmother.,He's my grandfather.,She's a nurse.,A
+116,How old are you?,I'm fine.,It's nine.,I'm nine.,C
+117,Is it a big dog?,"Yes, I am.","Yes, it is.","No, he's not.",B
+118,Is he tall?,"Yes, she is.","No, it's not.","Yes, he is.",C
+119,Is she short?,"No, she's not.","No, he isn't.","Yes, I can.",A
+120,What's your name?,He is Abu.,I am Abu.,I'm eight.,B
+121,What color is it?,It's a black pen.,"No, it isn't.",It's black.,C
+122,Can you draw?,"Yes, I can.",I can draw.,"Yes, she is.",A
+123,Is he a cook?,I'm fine.,"No, he's not.","No, she's not.",B
+124,Who's he?,He's my brother.,She's my sister.,It's a small dog.,A
+125,What's this?,It's yellow.,I'm Mia.,It's a ruler.,C
+126,Is she a student?,"Yes, she is.","Yes, I am.","No, he's not.",A
+127,What can you do?,I'm a student.,I can swim.,He can dance.,B
+128,Who's she?,He's my brother.,She is short.,She's my mother.,C
+129,Is he a driver?,"Yes, he is.","No, I'm not.",It's a big car.,A
+130,Can you dance?,I can dance.,"No, it's not.","Yes, I can.",C
+131,What's that?,It's a marker.,It's red.,I'm fine.,A
+132,How old are you?,It's fifteen.,Thank you.,I'm fifteen.,C
+133,Is that a cat?,"No, I'm not.","Yes, I can.","No, it isn't.",C
+134,What color is it?,It's orange.,It's a book.,"Yes, it is.",A
+135,Who's he?,He's my grandfather.,She's my grandmother.,I am a boy.,A
+136,Is she a nurse?,"Yes, he is.","No, it isn't.","Yes, she is.",C
+137,Can you read?,"No, I can't.",I am read.,"Yes, she is.",A
+138,Is he a teacher?,"Yes, she is.","No, he's not.",I'm a teacher.,B
+139,Is she tall?,"Yes, he is.","Yes, she is.","No, it's not.",B
+140,Is he short?,"No, she isn't.","Yes, I am.","No, he's not.",C
+141,What's this?,It's a yellow eraser.,It's a yellow.,"Yes, it is.",A
+142,What can you do?,I'm a cook.,She's my mother.,I can write.,C
+143,Is that a bird?,"Yes, it is.","No, I'm not.",I can fly.,A
+144,How are you?,I'm ten.,How are you?,I'm fine.,C
+145,Nice to meet you.,Thank you.,Goodbye.,"Nice to meet you, too.",C
+146,What's your name?,I'm ten.,My name is Mia.,He is Mia.,B
+147,How old are you?,I'm twelve.,I'm fine.,You're welcome.,A
+148,What's that?,"No, it isn't.",It's green.,It's a book.,C
+149,Is it a big dog?,"Yes, I am.","No, it's a small dog.","No, he's not.",B
+150,Can you jump?,I can jump.,"Yes, it is.","Yes, I can.",C
+151,Who's she?,She's my sister.,He's my brother.,She is a doctor.,A
+152,Is he a student?,"No, she's not.","Yes, I am.","No, he's not.",C
+153,What color is it?,It's a pink bird.,It's pink.,"No, it's not.",B
+154,Is he a cook?,"Yes, she is.","Yes, he is.",I'm a cook.,B
+155,What's this?,It's a ruler.,I'm Abu.,It's blue.,A
+156,Can you swim?,"Yes, I can.","Yes, it is.",He can swim.,A
+157,Is she a teacher?,"No, he's not.",I'm a teacher.,"Yes, she is.",C
+158,Who's he?,He's my brother.,She's my sister.,He is tall.,A
+159,Is that a dog?,"Yes, I can.","No, I'm not.","Yes, it is.",C
+160,How old are you?,I'm fine.,I'm thirteen.,It's thirteen.,B
+161,What can you do?,He can draw.,I can draw.,She is a nurse.,B
+162,Is he a doctor?,"No, she isn't.",He is a doctor.,"Yes, he is.",C
+163,Is she short?,"Yes, he is.","Yes, she is.","No, it's not.",B
+164,What's your name?,I'm nine.,My name is Teddy.,I'm Teddy.,C
+165,What color is it?,It's a pen.,It's black.,"Yes, it is.",B
+166,Is he your father?,"Yes, he is.","Yes, she is.",I'm his father.,A
+167,Who's she?,He's my father.,I'm Mia.,She's my mother.,C
+168,Can you write?,I can write.,"No, he can't.","Yes, I can.",C
+169,Is she a nurse?,"No, she's not.","No, he's not.","Yes, I am.",A
+170,What's that?,I'm a student.,It's green.,It's a pen.,C
+171,How are you?,I'm seven.,"I'm fine, thank you.",You're welcome.,B
+172,Goodbye.,Good morning.,See you later.,Try again.,B
+173,Is it a big cat?,"No, it's a small cat.","Yes, I can.","No, she isn't.",A
+174,What's your name?,He is Amber.,It's Amber.,I am Amber.,C
+175,What color is it?,It's blue.,It's a blue book.,"No, it's not.",A
+176,Is he a doctor?,"Yes, she is.","Yes, he is.","No, I'm not.",B
+177,Can you read?,I am read.,"Yes, I can.","No, she isn't.",B
+178,Who's he?,He's my grandfather.,She's my grandmother.,I'm ten.,A
+179,How old are you?,I'm eight.,I'm fine.,It's eight.,A
+180,What's this?,I'm Edison.,"No, it isn't.",It's an eraser.,C
+181,What color is it?,It's a white dog.,It's white.,"Yes, it is.",B
+182,Is she a teacher?,"Yes, she is.","Yes, he is.","No, it isn't.",A
+183,Can you dance?,"Yes, I can.",I can dance.,"No, he isn't.",A
+184,Who's she?,He's my brother.,She's my sister.,I'm Mia.,B
+185,Is he a driver?,"No, I'm not.","Yes, he is.",It's a car.,B
+186,What can you do?,I'm a student.,He can sing.,I can sing.,C
+187,How are you?,I'm fine.,I'm ten.,Good morning.,A
+188,What's your name?,My name is Rocky.,He is Rocky.,I'm nine.,A
+189,Is that a cat?,"No, I'm not.","Yes, it is.",I can jump.,B
+190,What's that?,It's red.,"No, it isn't.",It's a book.,C
+191,Is he tall?,"Yes, he is.","Yes, she is.","No, it's not.",A
+192,Can you swim?,"Yes, it is.","No, I can't.",I can swim.,B
+193,Who's he?,She's my sister.,I'm Abu.,He's my father.,C
+194,Is she a nurse?,"No, she isn't.","Yes, he is.",I am a nurse.,A
+195,What color is it?,It's yellow.,It's a yellow pen.,"Yes, it is.",A
+196,How old are you?,I'm fine.,It's ten.,I'm ten.,C
+197,What's this?,It's a ruler.,I'm Mia.,It's blue.,A
+198,Is he a student?,"Yes, I am.","Yes, he is.","No, she's not.",B
+199,Can you write?,I can write.,"Yes, I can.",She's a nurse.,B
+200,Who's she?,She's my mother.,He's my father.,She's short.,A
